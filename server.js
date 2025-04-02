@@ -9,6 +9,10 @@ const passport = require("passport");
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
+const mongodb = require("./data/database");
+
+const port = process.env.PORT || 3000;
+
 mongodb.initDb((err) =>{
     if(err){
         console.log(err);
@@ -58,13 +62,13 @@ passport.serializeUser((user, done) => {
     done(null, user);
   });
 
-  app.get('/auth/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-  );
-  
-  app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
-    (req, res) => {
-      res.redirect('/profile');
-    }
-  );
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/profile');
+  }
+);
