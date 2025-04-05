@@ -11,7 +11,14 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const mongodb = require("./data/database");
 
+
 const port = process.env.PORT || 3000;
+const jwt = require('jsonwebtoken');
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+const  userControler = require("./controllers/users.js")
 
 mongodb.initDb((err) =>{
     if(err){
@@ -21,6 +28,7 @@ mongodb.initDb((err) =>{
         app.listen(port, () =>{console.log(`Database and Node running on port ${port}`)});
     }
 })
+
 
 app
 .use(bodyParser.json())
@@ -58,17 +66,49 @@ passport.use(new GoogleStrategy({
 passport.serializeUser((user, done) => {
     done(null, user);
   });
-  passport.deserializeUser((user, done) => {
-    done(null, user);
-  });
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
 
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+app.get('/login',
+  passport.authenticate('google', { scope: ['profile', 'email'] }, (req, res) => {})
 );
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/api-docs');
+});
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/profile');
+  async (req, res) => {
+    const token = jwt.sign({ user: req.user }, 'secret', { expiresIn: '1h' });
+    res.cookie('token', token, { path: '/' });
+    res.redirect('/');
+    const user = req.user;
+  
+    try {
+      const email = user.emails?.[0]?.value || 'email-default@example.com'; // Garantir um email padrão
+      const name = user.displayName || 'Defaut name';
+      const existingUser = await mongodb
+          .getDatabase()
+          .db()
+          .collection("users")
+          .findOne({ email });
+      if (!existingUser) {
+          await userControler.createUser(email, name); // Salvar no banco
+      }
+      else{
+          await userControler.updateUser(email, name);
+      }
+      
+      console.log("User saved:", email);
+    } catch (error) {
+        console.error("Error saving user:", error);
+        res.status(500).send("Error saving user!");
+    }
+
+
   }
 );
+
