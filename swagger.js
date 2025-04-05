@@ -5,10 +5,11 @@ const doc = {
         title: "eCommerce Api",
         description: "eCommerce CRUD Api"
     },
-    // host: "cse-341-project2-8oxr.onrender.com",
-
-    host: "localhost:3000",
+    host: "cse-341-project2-8oxr.onrender.com",
     schemes: ["http"]
+
+    //host: "localhost:3000",
+    //schemes: ["http"]
 } 
 
 const outputFile = "./swagger.json";

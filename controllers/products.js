@@ -64,10 +64,10 @@ const getSingleProduct = async (req, res) => {
 const insertProduct = async (req, res) => {
     //#swagger.tags=["Products"]
     try {
-        const { name, category, price, stock, description, suplierid } = req.body;
+        const { name, category, price, stock, description, supplierid } = req.body;
     
         // Validação básica
-        if (!name|| !category || !price || !stock || !description || !suplierid) {
+        if (!name|| !category || !price || !stock || !description || !supplierid) {
             return res.status(400).json({ error: "All fields are required." });
         }
     
@@ -81,7 +81,7 @@ const insertProduct = async (req, res) => {
             price,
             stock,
             description, 
-            suplierid,
+            supplierid,
         };
     
         const result = await productsCollection.insertOne(newProduct);
@@ -137,10 +137,10 @@ const updateProduct = async (req, res) => {
             res.status(400).json("Must have a valid product id to update a product.");
         }
         const { id } = req.params; // ID do registro a ser atualizado
-        const { name, category, price, stock, description, suplierid } = req.body;
+        const { name, category, price, stock, description, supplierid } = req.body;
     
         // Validação básica
-        if (!name|| !category || !price || !stock || !description || !suplierid) {
+        if (!name|| !category || !price || !stock || !description || !supplierid) {
             return res.status(400).json({ error: "All fields are required." });
         }
 
@@ -159,7 +159,7 @@ const updateProduct = async (req, res) => {
             price,
             stock,
             description, 
-            suplierid,
+            supplierid,
         };
 
         // Atualizar o contato pelo ID

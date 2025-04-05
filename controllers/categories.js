@@ -152,7 +152,7 @@ const updateCategory = async (req, res) => {
         };
 
         // Atualizar o contato pelo ID
-        const result = await itensCollection.updateOne(
+        const result = await categoryCollection.updateOne(
             { _id: new ObjectId(id) }, // Filtro pelo ID
             { $set: updatedData } // Atualização parcial
         );

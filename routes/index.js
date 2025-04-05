@@ -15,111 +15,34 @@ router.get("/", (req,res) => {res.send(`<html>
             </body>
         </html>`);});
 
-const passport = require('passport');
-const productsController = require("../controllers/products");
-// const itensControler = require("../controllers/itens");
-// const userControler = require("../controllers/users");
 
-// const validation = require("../middleware/validate");
+const productsController = require("../controllers/products");
+const categoryController = require("../controllers/categories");
 
 const {isAuthenticated} = require( "../middleware/authenticate");
 
-// Route for contacts
+const validation = require("../middleware/validate");
+
+// Route for products
 router.get(
     //#swagger.tags=[Get all products]
-    "/products",isAuthenticated, productsController.getAll); // Route to search all products
-router.get("/products/:id", productsController.getSingle); // Route to search for a product by ID
-router.post("/products", productsController.insertProduct); // Route to create product
-router.delete("/products/:id", productsController.deleteProduct); //Route to delete a product
-router.put("/products/:id", productsController.updateProduct);//route to update product
+    "/products",isAuthenticated, productsController.getAllProducts); // Route to search all products
+router.get("/products/:id", isAuthenticated, productsController.getSingleProduct); // Route to search for a product by ID
+router.post("/products", isAuthenticated, validation.saveProduct, productsController.insertProduct); // Route to create product
+router.delete("/products/:id", isAuthenticated, productsController.deleteProduct); //Route to delete a product
+router.put("/products/:id", isAuthenticated, validation.saveProduct, productsController.updateProduct);//route to update product
+
+//route for categories
+
+router.get(
+    //#swagger.tags=[Get all products]
+    "/categories",isAuthenticated, categoryController.getAllCategories); // Route to search all Categories
+router.get("/categories/:id", isAuthenticated, categoryController.getSingleCategory); // Route to search for a category by ID
+router.post("/categories", isAuthenticated, validation.saveCategory, categoryController.insertCategory); // Route to create category
+router.delete("/categories/:id", isAuthenticated, categoryController.deleteCategory); //Route to delete a category
+router.put("/categories/:id", isAuthenticated,  validation.saveCategory, categoryController.updateCategory);//route to update category
 
 
 
-
-
-// router.get("/contacts/:id", isAuthenticated, contactsController.getSingle); // Route to search for a product by ID
-// router.post("/contacts", isAuthenticated, validation.saveContact, contactsController.insertContact); // Route to create contact
-// router.put("/contacts/:id", isAuthenticated, validation.saveContact,contactsController.updateContact);//route to update contact
-// router.delete("/contacts/:id", isAuthenticated, contactsController.deleteContact); //Route to delete contact
-
-
-// //Routes for itens
-// router.get(
-//     //#swagger.tags=[Get all itens]
-//     "/itens", isAuthenticated, itensControler.getAllItens); // Route to search all itens
-// router.get("/itens/:id", isAuthenticated, itensControler.getSingleItem); // Route to search for a item by ID
-// router.post("/itens", isAuthenticated, validation.saveItem, itensControler.insertItem); // Route to create item
-// router.put("/itens/:id", isAuthenticated, validation.saveItem, itensControler.updateItem);//route to update item
-// router.delete("/itens/:id", isAuthenticated, itensControler.deleteItem); //Route to delete item
-
-
-// // Rota para criar usuário
-// router.post("/create-user", async (req, res) => {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//         return res.status(400).json({ error: "Email and password are required." });
-//     }
-
-//     try {
-//         const result = await userControler.createUser(email, password);
-//         return res.status(201).json(result);
-//     } catch (error) {
-//         console.error("Erro ao criar usuário:", error.message);
-//         return res.status(400).json({ error: error.message });
-//     }
-// });
-
-// // Rota para atualizar senha do usuário
-// router.put("/update-user", async (req, res) => {
-//     const { email, newPassword } = req.body;
-
-//     if (!email || !newPassword) {
-//         return res
-//             .status(400)
-//             .json({ error: "Email and new password are required." });
-//     }
-
-//     try {
-//         const result = await updateUser(email, newPassword);
-//         return res.status(200).json(result);
-//     } catch (error) {
-//         console.error("Error updating user:", error.message);
-//         return res.status(400).json({ error: error.message });
-//     }
-// });
-
-// // Rota para autenticar (login) do usuário
-// router.post("/login", async (req, res) => {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//         return res.status(400).json({ error: "Email and password are required." });
-//     }
-
-//     try {
-//         const result = await authenticateUser(email, password);
-//         return res.status(200).json(result);
-//     } catch (error) {
-//         console.error("Error authenticating user:", error.message);
-//         return res.status(400).json({ error: error.message });
-//     }
-// });
-
-// //routes for user creation, login and logout
-
-
-// router.get("/login-oauth", passport.authenticate("github"), (req, res) => {});
-
-// router.get("/logout-oauth", function(req, res, next){
-//     if (isAuthenticated){
-//         req.logOut(function(err){
-//             if (err) { return next(err);}
-//         }); 
-//         res.redirect("/");  
-//     }
-//     res.send("You are not logged in.");
-    
-// });
 
 module.exports = router;
